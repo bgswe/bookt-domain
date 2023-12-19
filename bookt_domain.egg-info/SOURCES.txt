@@ -1,0 +1,6 @@
+pyproject.toml
+setup.cfg
+bookt_domain.egg-info/PKG-INFO
+bookt_domain.egg-info/SOURCES.txt
+bookt_domain.egg-info/dependency_links.txt
+bookt_domain.egg-info/top_level.txt
