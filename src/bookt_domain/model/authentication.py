@@ -4,7 +4,7 @@ from uuid import UUID
 import bcrypt
 import jwt
 
-import bookt_domain.settings
+from bookt_domain import settings
 
 
 class ExpiredToken(Exception):

@@ -20,9 +20,14 @@ async def create_originator_user(uow: UnitOfWork, event: AccountCreated):
     await uow.repository.save(aggregate=user)
 
 
-EVENT_HANDLERS = {"AccountCreated": [create_originator_user]}
+EVENT_HANDLERS = {
+    "AccountCreated": [create_originator_user],
+}
 
 
 async def handle_event(event: Event):
-    if isinstance(event, AccountCreated):
-        await create_originator_user(event=event)
+    event_name = event.__class__.__name__
+
+    handlers = EVENT_HANDLERS.get(event_name, [])
+    for handler in handlers:
+        await handler(event=event)

@@ -28,5 +28,7 @@ COMMAND_HANDLERS = {
 
 
 async def handle_command(command: Command):
-    if isinstance(command, Register):
-        await handle_registration(command=command)
+    command_name = command.__class__.__name__
+
+    handler = COMMAND_HANDLERS.get(command_name, [])
+    await handler(command=command)
