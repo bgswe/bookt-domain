@@ -2,7 +2,7 @@ from cosmos import UnitOfWork
 from cosmos.decorators import Event, event
 
 from bookt_domain.model.account import AccountCreated
-from bookt_domain.model.user import User, UserRoles
+from bookt_domain.model.user import User, UserCreated, UserRoles
 
 
 @event
@@ -20,8 +20,16 @@ async def create_originator_user(uow: UnitOfWork, event: AccountCreated):
     await uow.repository.save(aggregate=user)
 
 
+@event
+async def handler_user_create(uow: UnitOfWork, event: UserCreated):
+    user = uow.repository.get(id=id, aggregate_root_class=User)
+
+    print(user)
+
+
 EVENT_HANDLERS = {
     "AccountCreated": [create_originator_user],
+    "UserCreated": [],
 }
 
 
