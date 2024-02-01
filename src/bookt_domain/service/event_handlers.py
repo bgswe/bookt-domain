@@ -29,7 +29,7 @@ async def handler_user_create(uow: UnitOfWork, event: UserCreated):
 
 EVENT_HANDLERS = {
     "AccountCreated": [create_originator_user],
-    "UserCreated": [],
+    "UserCreated": [handler_user_create],
 }
 
 
