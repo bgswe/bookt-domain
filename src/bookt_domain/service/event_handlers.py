@@ -25,7 +25,10 @@ async def create_originator_user(uow: UnitOfWork, event: AccountCreated):
 
 @event
 async def handler_user_create(uow: UnitOfWork, event: UserCreated):
-    user = await uow.repository.get(id=id, aggregate_root_class=User)
+    user = await uow.repository.get(
+        id=event.stream_id,
+        aggregate_root_class=User,
+    )
 
     log = logger.bind(user=user)
     log.info("log from handle_user_create")

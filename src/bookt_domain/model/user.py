@@ -6,13 +6,6 @@ from uuid import UUID, uuid4
 
 import bcrypt
 from cosmos.domain import AggregateRoot, DomainEvent
-from pydantic import Field
-
-
-class UserRoles(StrEnum):
-    APP_ADMIN = auto()
-    ACCOUNT_ADMIN = auto()
-    ACCOUNT_USER = auto()
 
 
 class UserRoles(StrEnum):
@@ -72,6 +65,7 @@ class User(AggregateRoot):
 
 
 class UserCreated(DomainEvent):
+    stream_id: UUID
     account_id: UUID
     email: str
     roles: List[UserRoles]
