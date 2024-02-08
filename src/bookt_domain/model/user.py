@@ -15,10 +15,6 @@ class UserRoles(StrEnum):
 
 
 class User(AggregateRoot):
-    def _mutate(self, event: DomainEvent):
-        if isinstance(event, UserCreated):
-            self._apply_create(event=event)
-
     def create(
         self,
         *,
@@ -45,6 +41,10 @@ class User(AggregateRoot):
             )
         )
 
+    def _mutate(self, event: DomainEvent):
+        if isinstance(event, UserCreated):
+            self._apply_create(event=event)
+
     def _apply_create(self, event: UserCreated):
         """Initialize a new instance of the User aggregate root"""
 
@@ -61,6 +61,7 @@ class User(AggregateRoot):
             first_name=event.first_name,
             last_name=event.last_name,
             hashed_password=hashed_password,
+            last_login=None,
         )
 
 
