@@ -41,8 +41,7 @@ EVENT_HANDLERS = {
 
 
 async def handle_event(event: Event):
-    event_name = event.__class__.__name__
+    handlers = EVENT_HANDLERS.get(event.name, [])
 
-    handlers = EVENT_HANDLERS.get(event_name, [])
     for handler in handlers:
         await handler(event=event)
