@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from cosmos.domain import AggregateRoot, DomainEvent
 
@@ -10,12 +10,12 @@ class Account(AggregateRoot):
         if isinstance(event, AccountCreated):
             self._apply_create(event=event)
 
-    def create(self, *, id: UUID = None, originator_email: str):
+    def create(self, *, id: UUID | None = None, originator_email: str):
         """Entry point into account creation"""
 
         self.mutate(
             event=AccountCreated(
-                stream_id=id,
+                stream_id=id if id else uuid4(),
                 originator_email=originator_email,
             )
         )

@@ -1,11 +1,9 @@
-from cosmos import UnitOfWork, command
-from cosmos.domain import Command
+from cosmos import UnitOfWork
 
 from bookt_domain.model import Account
-from bookt_domain.service.commands import Register
+from bookt_domain.model.commands import Register
 
 
-@command
 async def handle_registration(
     uow: UnitOfWork,
     command: Register,
@@ -25,10 +23,3 @@ async def handle_registration(
 COMMAND_HANDLERS = {
     "Register": handle_registration,
 }
-
-
-async def handle_command(command: Command):
-    command_name = command.__class__.__name__
-
-    handler = COMMAND_HANDLERS.get(command_name, [])
-    await handler(command=command)

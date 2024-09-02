@@ -1,6 +1,5 @@
 import structlog
 from cosmos import UnitOfWork
-from cosmos.decorators import Event, event
 
 from bookt_domain.model.account import AccountCreated
 from bookt_domain.model.user import User, UserCreated, UserRoles
@@ -8,7 +7,6 @@ from bookt_domain.model.user import User, UserCreated, UserRoles
 logger = structlog.get_logger()
 
 
-@event
 async def create_originator_user(uow: UnitOfWork, event: AccountCreated):
     """Create a new user for creator of new account"""
 
@@ -23,7 +21,6 @@ async def create_originator_user(uow: UnitOfWork, event: AccountCreated):
     await uow.repository.save(aggregate=user)
 
 
-@event
 async def handler_user_create(uow: UnitOfWork, event: UserCreated):
     user = await uow.repository.get(
         id=event.stream_id,
@@ -38,10 +35,3 @@ EVENT_HANDLERS = {
     "AccountCreated": [create_originator_user],
     "UserCreated": [handler_user_create],
 }
-
-
-async def handle_event(event: Event):
-    handlers = EVENT_HANDLERS.get(event.name, [])
-
-    for handler in handlers:
-        await handler(event=event)
