@@ -7,7 +7,10 @@ from bookt_domain.model.user import User, UserCreated, UserRoles
 logger = structlog.get_logger()
 
 
-async def create_originator_user(uow: UnitOfWork, event: AccountCreated):
+async def create_originator_user(
+    unit_of_work: UnitOfWork,
+    event: AccountCreated,
+):
     """Create a new user for creator of new account"""
 
     user = User()
@@ -18,11 +21,11 @@ async def create_originator_user(uow: UnitOfWork, event: AccountCreated):
         roles=[UserRoles.ACCOUNT_ADMIN],
     )
 
-    await uow.repository.save(aggregate=user)
+    await unit_of_work.repository.save(aggregate=user)
 
 
-async def handler_user_create(uow: UnitOfWork, event: UserCreated):
-    user = await uow.repository.get(
+async def handler_user_create(unit_of_work: UnitOfWork, event: UserCreated):
+    user = await unit_of_work.repository.get(
         id=event.stream_id,
         aggregate_root_class=User,
     )

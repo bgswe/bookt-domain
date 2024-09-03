@@ -5,7 +5,7 @@ from bookt_domain.model.commands import Register
 
 
 async def handle_registration(
-    uow: UnitOfWork,
+    unit_of_work: UnitOfWork,
     command: Register,
 ):
     """Initiates the registration process by creating an Account"""
@@ -17,7 +17,7 @@ async def handle_registration(
         originator_email=command.originator_email,
     )
 
-    await uow.repository.save(account)
+    await unit_of_work.repository.save(account)
 
 
 COMMAND_HANDLERS = {
