@@ -1,40 +1,24 @@
 import structlog
 from cosmos import UnitOfWork
 
-from bookt_domain.model.account import AccountCreated
-from bookt_domain.model.user import User, UserCreated, UserRoles
+from bookt_domain.model.tenant import TenantRegistered
+
+# from bookt_domain.model.user import User, UserCreated, UserRoles
 
 logger = structlog.get_logger()
 
 
-async def create_originator_user(
+async def registration_handler(
     unit_of_work: UnitOfWork,
-    event: AccountCreated,
+    event: TenantRegistered,
 ):
-    """Create a new user for creator of new account"""
+    """..."""
 
-    user = User()
-
-    user.create(
-        account_id=event.stream_id,
-        email=event.originator_email,
-        roles=[UserRoles.ACCOUNT_ADMIN],
-    )
-
-    await unit_of_work.repository.save(aggregate=user)
-
-
-async def handler_user_create(unit_of_work: UnitOfWork, event: UserCreated):
-    user = await unit_of_work.repository.get(
-        id=event.stream_id,
-        aggregate_root_class=User,
-    )
-
-    log = logger.bind(user=user)
-    log.info("log from handle_user_create")
+    logger.info("WOOO FROM EVENT")
 
 
 EVENT_HANDLERS = {
-    "AccountCreated": [create_originator_user],
-    "UserCreated": [handler_user_create],
+    # Possible to have keys wh/ are invalid events?
+    "TenantRegistered": [registration_handler],
+    "UserCreated": [],
 }

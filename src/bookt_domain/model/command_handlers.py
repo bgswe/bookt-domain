@@ -1,25 +1,25 @@
 from cosmos import UnitOfWork
 
-from bookt_domain.model import Account
-from bookt_domain.model.commands import Register
+from bookt_domain.model.commands import RegisterTenant
+from bookt_domain.model.tenant import Tenant
 
 
 async def handle_registration(
     unit_of_work: UnitOfWork,
-    command: Register,
+    command: RegisterTenant,
 ):
-    """Initiates the registration process by creating an Account"""
+    """Initiates the registration process by creating an Tenant"""
 
-    account = Account()
+    tenant = Tenant()
 
-    account.create(
-        id=command.account_id,
-        originator_email=command.originator_email,
+    tenant.register(
+        id=command.tenant_id,
+        name=command.tenant_name,
     )
 
-    await unit_of_work.repository.save(account)
+    await unit_of_work.repository.save(tenant)
 
 
 COMMAND_HANDLERS = {
-    "Register": handle_registration,
+    "RegisterTenant": handle_registration,
 }

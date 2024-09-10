@@ -10,8 +10,8 @@ from cosmos.domain import AggregateRoot, DomainEvent
 
 class UserRoles(StrEnum):
     APP_ADMIN = auto()
-    ACCOUNT_ADMIN = auto()
-    ACCOUNT_USER = auto()
+    TENANT_ADMIN = auto()
+    TENANT_USER = auto()
 
 
 class User(AggregateRoot):
@@ -19,21 +19,18 @@ class User(AggregateRoot):
         self,
         *,
         id: UUID = None,
-        account_id: UUID,
+        tenant_id: UUID,
         email: str,
         roles: List[UserRoles],
         first_name: str = None,
         last_name: str = None,
     ):
-        """Entry point into account creation"""
-
-        if id is None:
-            id = uuid4()
+        """Entry point into User creation"""
 
         self.mutate(
             event=UserCreated(
-                stream_id=id,
-                account_id=account_id,
+                stream_id=id if id is not None else uuid4(),
+                tenant_id=tenant_id,
                 email=email,
                 roles=roles,
                 first_name=first_name,
@@ -56,7 +53,7 @@ class User(AggregateRoot):
 
         self._initialize(
             id=event.stream_id,
-            account_id=event.account_id,
+            tenant_id=event.tenant_id,
             email=event.email,
             first_name=event.first_name,
             last_name=event.last_name,
@@ -67,7 +64,7 @@ class User(AggregateRoot):
 
 class UserCreated(DomainEvent):
     stream_id: UUID
-    account_id: UUID
+    tenant_id: UUID
     email: str
     roles: List[UserRoles]
     first_name: str | None = None
