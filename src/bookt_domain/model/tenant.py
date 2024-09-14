@@ -11,13 +11,13 @@ class Tenant(AggregateRoot):
         if isinstance(event, TenantRegistered):
             self._apply_registration(event=event)
 
-    def register(self, *, id: UUID | None = None, name: str):
+    def register(self, *, id: UUID | None = None, tenant_name: str):
         """Entry point into Tenant creation"""
 
         self.mutate(
             event=TenantRegistered(
                 stream_id=id if id is not None else uuid4(),
-                tenant_name=name,
+                tenant_name=tenant_name,
                 registered_at=datetime.now(UTC),
             )
         )
@@ -27,7 +27,7 @@ class Tenant(AggregateRoot):
 
         self._initialize(
             id=event.stream_id,
-            name=event.name,
+            tenant_name=event.tenant_name,
             registered_at=event.registered_at,
         )
 

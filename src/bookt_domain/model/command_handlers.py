@@ -15,7 +15,7 @@ async def handle_tenant_registration(
 
     tenant.register(
         id=command.tenant_id,
-        name=command.tenant_name,
+        tenant_name=command.tenant_name,
     )
 
     await unit_of_work.repository.save(tenant)
