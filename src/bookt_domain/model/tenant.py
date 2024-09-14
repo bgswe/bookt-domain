@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
 from cosmos.domain import AggregateRoot, DomainEvent
@@ -18,7 +18,7 @@ class Tenant(AggregateRoot):
             event=TenantRegistered(
                 stream_id=id if id is not None else uuid4(),
                 tenant_name=name,
-                registered_at=datetime.now(datetime.UTC),
+                registered_at=datetime.now(UTC),
             )
         )
 
