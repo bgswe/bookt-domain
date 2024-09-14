@@ -27,7 +27,7 @@ class Tenant(AggregateRoot):
 
         self._initialize(
             id=event.stream_id,
-            tenant_name=event.tenant_name,
+            name=event.tenant_name,
             registered_at=event.registered_at,
         )
 
