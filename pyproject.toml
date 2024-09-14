@@ -7,4 +7,10 @@ name = "bookt-domain"
 version = "0.0.0"
 dependencies = [
     "bcrypt",
+    # -----
+    # These might be needed, but likely used elsewhere
+    # when implementing authN/authZ
+    # -----
+    # PyJWT
+    # pyjwt[crypto]
 ]
