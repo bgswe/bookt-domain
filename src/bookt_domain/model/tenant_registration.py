@@ -56,7 +56,7 @@ class TenantRegistration(AggregateRoot):
 
         self.registration_email_validated = True
 
-        self._mutate(
+        self.mutate(
             event=TenantRegistrationIsComplete(
                 tenant_id=self.tenant_id,
             )
