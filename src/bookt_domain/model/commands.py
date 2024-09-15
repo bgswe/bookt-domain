@@ -11,9 +11,8 @@ class RegisterTenant(Command):
 
 
 class RegisterUser(Command):
+    user_registration_id: UUID | None = None
     user_id: UUID | None = None
     tenant_id: UUID
     email: str
     password: str
-    first_name: str
-    last_name: str

@@ -32,12 +32,11 @@ async def handle_user_registration(
     registration = UserRegistration()
 
     registration.initiate_registration(
-        id=command.user_id,
+        stream_id=command.user_registration_id,
+        user_id=command.user_id,
         tenant_id=command.tenant_id,
         email=command.email,
         password=command.password,
-        first_name=command.first_name,
-        last_name=command.last_name,
     )
 
     await unit_of_work.repository.save(registration)
