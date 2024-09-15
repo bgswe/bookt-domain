@@ -83,4 +83,4 @@ class TenantRegistrationEmailWasValidated(DomainEvent):
 
 
 class TenantRegistrationIsComplete(DomainEvent):
-    tenant_id: str
+    tenant_id: UUID
