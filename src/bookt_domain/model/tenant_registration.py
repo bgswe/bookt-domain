@@ -8,8 +8,10 @@ from cosmos.domain import AggregateRoot, DomainEvent
 
 class TenantRegistration(AggregateRoot):
     def _mutate(self, event: DomainEvent):
-        if isinstance(event, TenantRegistrationInitiated):
+        if isinstance(event, TenantRegistrationWasInitiated):
             self._apply_registration(event=event)
+        elif isinstance(event, TenantRegistrationEmailWasValidated):
+            self._apply_tenant_email_was_validated(event=event)
 
     def initiate_registration(
         self,
@@ -19,10 +21,10 @@ class TenantRegistration(AggregateRoot):
         tenant_name: str,
         tenant_registration_email: str,
     ):
-        """Entry point into Tenant creation"""
+        """Begin the process of registering a Tenant"""
 
         self.mutate(
-            event=TenantRegistrationInitiated(
+            event=TenantRegistrationWasInitiated(
                 stream_id=stream_id if stream_id is not None else uuid4(),
                 tenant_id=tenant_id if tenant_id is not None else uuid4(),
                 tenant_name=tenant_name,
@@ -33,7 +35,7 @@ class TenantRegistration(AggregateRoot):
 
     def _apply_registration_initiated(
         self,
-        event: TenantRegistrationInitiated,
+        event: TenantRegistrationWasInitiated,
     ):
         """Initialize a new instance of the Tenant aggregate root"""
 
@@ -42,16 +44,35 @@ class TenantRegistration(AggregateRoot):
             tenant_id=event.tenant_id,
             tenant_name=event.tenant_name,
             registration_email=event.tenant_registration_email,
+            registration_email_validated=False,
             registered_at=event.registered_at,
         )
 
+    def validate_registration_email(self):
+        self._mutate(event=TenantRegistrationEmailWasValidated())
 
-class TenantRegistrationInitiated(DomainEvent):
+    def _apply_tenant_email_was_validated(self):
+        """..."""
+
+        self.registration_email_validated = True
+
+        self._mutate(
+            event=TenantRegistrationIsComplete(
+                tenant_id=self.tenant_id,
+            )
+        )
+
+
+class TenantRegistrationWasInitiated(DomainEvent):
     tenant_id: UUID
     tenant_name: str
     tenant_registration_email: str
     initiated_at: datetime
 
 
-class TenantRegistrationComplete(DomainEvent):
+class TenantRegistrationEmailWasValidated(DomainEvent):
+    ...
+
+
+class TenantRegistrationIsComplete(DomainEvent):
     tenant_id: str
