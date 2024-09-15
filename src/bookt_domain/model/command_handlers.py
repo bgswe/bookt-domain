@@ -1,3 +1,4 @@
+import structlog
 from cosmos import UnitOfWork
 
 from bookt_domain.model.commands import (  # RegisterUser,
@@ -7,6 +8,9 @@ from bookt_domain.model.commands import (  # RegisterUser,
 from bookt_domain.model.tenant_registration import TenantRegistration
 
 # from bookt_domain.model.user_registrar import UserRegistrar
+
+
+logger = structlog.get_logger()
 
 
 async def handle_tenant_registration(
@@ -40,6 +44,11 @@ async def handle_validate_tenant_email(
 
     registration.validate_registration_email()
     registration.complete_registration()
+
+    log = logger.bind(events=registration.events)
+    log.bind(m_id_0=registration.events[0].id)
+    log.bind(m_id_1=registration.events[1].id)
+    log.info("FROM HANDLE TENANT EMAIL")
 
     await unit_of_work.repository.save(registration)
 
