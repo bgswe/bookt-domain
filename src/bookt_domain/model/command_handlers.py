@@ -1,8 +1,8 @@
 from cosmos import UnitOfWork
 
 from bookt_domain.model.commands import RegisterTenant, RegisterUser
-from bookt_domain.model.tenant import Tenant
-from bookt_domain.model.user import User
+from bookt_domain.model.tenant_registration import TenantRegistration
+from bookt_domain.model.user_registration import UserRegistration
 
 
 async def handle_tenant_registration(
@@ -11,14 +11,16 @@ async def handle_tenant_registration(
 ):
     """Initiates the registration process for a Tenant"""
 
-    tenant = Tenant()
+    registration = TenantRegistration()
 
-    tenant.register(
-        id=command.tenant_id,
+    registration.initiate_registration(
+        stream_id=command.tenant_registration_id,
+        tenant_id=command.tenant_id,
         tenant_name=command.tenant_name,
+        tenant_registration_email=command.tenant_registration_email,
     )
 
-    await unit_of_work.repository.save(tenant)
+    await unit_of_work.repository.save(registration)
 
 
 async def handle_user_registration(
@@ -27,9 +29,9 @@ async def handle_user_registration(
 ):
     """Initiates the registration process for a User"""
 
-    user = User()
+    registration = UserRegistration()
 
-    user.create(
+    registration.initiate_registration(
         id=command.user_id,
         tenant_id=command.tenant_id,
         email=command.email,
@@ -38,7 +40,7 @@ async def handle_user_registration(
         last_name=command.last_name,
     )
 
-    await unit_of_work.repository.save(user)
+    await unit_of_work.repository.save(registration)
 
 
 COMMAND_HANDLERS = {

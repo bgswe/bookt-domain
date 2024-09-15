@@ -14,35 +14,33 @@ class UserRoles(StrEnum):
     TENANT_USER = auto()
 
 
-class User(AggregateRoot):
-    def create(
+class UserRegistration(AggregateRoot):
+    def initiate_registration(
         self,
         *,
-        id: UUID = None,
+        stream_id: UUID | None = None,
+        user_id: UUID | None = None,
         tenant_id: UUID,
         email: str,
         roles: List[UserRoles],
-        first_name: str = None,
-        last_name: str = None,
     ):
         """Entry point into User creation"""
 
         self.mutate(
-            event=UserCreated(
-                stream_id=id if id is not None else uuid4(),
+            event=UserRegistrationInitiated(
+                stream_id=stream_id if stream_id is not None else uuid4(),
+                user_id=user_id if user_id is not None else uuid4(),
                 tenant_id=tenant_id,
                 email=email,
                 roles=roles,
-                first_name=first_name,
-                last_name=last_name,
             )
         )
 
     def _mutate(self, event: DomainEvent):
-        if isinstance(event, UserCreated):
-            self._apply_create(event=event)
+        if isinstance(event, UserRegistrationInitiated):
+            self._apply_registration_initiated(event=event)
 
-    def _apply_create(self, event: UserCreated):
+    def _apply_registration_initiated(self, event: UserRegistrationInitiated):
         """Initialize a new instance of the User aggregate root"""
 
         random_password = "password"
@@ -52,20 +50,18 @@ class User(AggregateRoot):
         hashed_password = hashed_password.decode("utf-8")
 
         self._initialize(
-            id=event.stream_id,
+            stream_id=event.stream_id,
+            user_id=event.user_id,
             tenant_id=event.tenant_id,
             email=event.email,
-            first_name=event.first_name,
-            last_name=event.last_name,
             hashed_password=hashed_password,
             last_login=None,
         )
 
 
-class UserCreated(DomainEvent):
+class UserRegistrationInitiated(DomainEvent):
     stream_id: UUID
+    user_id: UUID
     tenant_id: UUID
     email: str
     roles: List[UserRoles]
-    first_name: str | None = None
-    last_name: str | None = None
