@@ -45,7 +45,7 @@ class TenantRegistration(AggregateRoot):
             tenant_name=event.tenant_name,
             registration_email=event.tenant_registration_email,
             registration_email_validated=False,
-            registered_at=event.registered_at,
+            initiated_at=event.initiated_at,
         )
 
     def validate_registration_email(self):
