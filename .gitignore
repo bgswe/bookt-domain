@@ -1,3 +1,5 @@
 dist/
 *egg*
 venv/
+.venv/
+build/
