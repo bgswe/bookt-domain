@@ -46,8 +46,8 @@ async def handle_validate_tenant_email(
     registration.complete_registration()
 
     log = logger.bind(events=registration.events)
-    log.bind(m_id_0=registration.events[0].id)
-    log.bind(m_id_1=registration.events[1].id)
+    log.bind(m_id_0=registration.events[0].message_id)
+    log.bind(m_id_1=registration.events[1].message_id)
     log.info("FROM HANDLE TENANT EMAIL")
 
     await unit_of_work.repository.save(registration)
