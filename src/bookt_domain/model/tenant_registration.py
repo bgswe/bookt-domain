@@ -55,7 +55,10 @@ class TenantRegistration(AggregateRoot):
             )
         )
 
-    def _apply_tenant_email_was_validated(self):
+    def _apply_tenant_email_was_validated(
+        self,
+        event: TenantRegistrationEmailWasValidated,
+    ):
         """..."""
 
         self.registration_email_validated = True
