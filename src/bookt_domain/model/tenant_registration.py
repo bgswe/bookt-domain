@@ -29,7 +29,7 @@ class TenantRegistration(AggregateRoot):
                 tenant_id=tenant_id if tenant_id is not None else uuid4(),
                 tenant_name=tenant_name,
                 tenant_registration_email=tenant_registration_email,
-                registered_at=datetime.now(UTC),
+                initiated_at=datetime.now(UTC),
             )
         )
 
