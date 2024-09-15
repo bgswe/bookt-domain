@@ -63,6 +63,7 @@ class TenantRegistration(AggregateRoot):
 
         self.registration_email_validated = True
 
+    def complete_registration(self):
         self.mutate(
             event=TenantRegistrationIsComplete(
                 stream_id=self.stream_id,

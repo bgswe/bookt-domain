@@ -39,6 +39,7 @@ async def handle_validate_tenant_email(
     )
 
     registration.validate_registration_email()
+    registration.complete_registration()
 
     unit_of_work.repository.save(registration)
 
