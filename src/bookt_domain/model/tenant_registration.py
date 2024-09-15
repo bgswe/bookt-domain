@@ -49,7 +49,11 @@ class TenantRegistration(AggregateRoot):
         )
 
     def validate_registration_email(self):
-        self.mutate(event=TenantRegistrationEmailWasValidated())
+        self.mutate(
+            event=TenantRegistrationEmailWasValidated(
+                stream_id=self.stream,
+            )
+        )
 
     def _apply_tenant_email_was_validated(self):
         """..."""
@@ -58,6 +62,7 @@ class TenantRegistration(AggregateRoot):
 
         self.mutate(
             event=TenantRegistrationIsComplete(
+                stream_id=self.stream_id,
                 tenant_id=self.tenant_id,
             )
         )

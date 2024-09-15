@@ -22,10 +22,18 @@ class UserRegistrar(AggregateRoot):
             self._apply_registration_initiated(event=event)
 
     def create(self, tenant_id: UUID):
-        self.mutate(event=UserRegistrarCreated(tenant_id=tenant_id))
+        self.mutate(
+            event=UserRegistrarCreated(
+                stream_id=uuid4(),
+                tenant_id=tenant_id,
+            )
+        )
 
     def _apply_create(self, event: UserRegistrarCreated):
-        self._initialize(tenant_id=event.tenant_id)
+        self._initialize(
+            stream_id=self.stream_id,
+            tenant_id=event.tenant_id,
+        )
         self._created_user_ids = set()
 
     def initiate_registration(
@@ -39,6 +47,7 @@ class UserRegistrar(AggregateRoot):
 
         self.mutate(
             event=UserRegistrationInitiated(
+                stream_id=self.stream_id,
                 user_id=user_id if user_id is not None else uuid4(),
                 tenant_id=self.tenant_id,
                 email=email,

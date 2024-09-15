@@ -31,7 +31,7 @@ async def handle_validate_tenant_email(
     unit_of_work: UnitOfWork,
     command: ValidateTenantEmail,
 ):
-    """..."""
+    """Confirm the validation of the tenant's registration email"""
 
     registration = await unit_of_work.repository.get(
         id=command.tenant_registration_id,
