@@ -9,7 +9,7 @@ from cosmos.domain import AggregateRoot, DomainEvent
 class TenantRegistration(AggregateRoot):
     def _mutate(self, event: DomainEvent):
         if isinstance(event, TenantRegistrationWasInitiated):
-            self._apply_registration(event=event)
+            self._apply_registration_initiated(event=event)
         elif isinstance(event, TenantRegistrationEmailWasValidated):
             self._apply_tenant_email_was_validated(event=event)
 
