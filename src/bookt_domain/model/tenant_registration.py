@@ -49,7 +49,7 @@ class TenantRegistration(AggregateRoot):
         )
 
     def validate_registration_email(self):
-        self._mutate(event=TenantRegistrationEmailWasValidated())
+        self.mutate(event=TenantRegistrationEmailWasValidated())
 
     def _apply_tenant_email_was_validated(self):
         """..."""
