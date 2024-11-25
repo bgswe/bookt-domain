@@ -6,8 +6,8 @@ from bookt_domain.model.commands import (
     RegisterUser,
     ValidateTenantEmail,
 )
-from bookt_domain.model.tenant_registration import TenantRegistration
-from bookt_domain.model.user_registrar import UserRegistrar
+from bookt_domain.model.tenant_registratrar import TenantRegistratrar
+from bookt_domain.model.user_registrar import UserRoles
 
 logger = structlog.get_logger()
 
@@ -18,7 +18,7 @@ async def handle_tenant_registration(
 ):
     """Initiates the registration process for a Tenant"""
 
-    registration = TenantRegistration()
+    registration = TenantRegistratrar()
 
     registration.initiate_registration(
         stream_id=command.tenant_registration_id,
@@ -38,7 +38,7 @@ async def handle_validate_tenant_email(
 
     registration = await unit_of_work.repository.get(
         id=command.tenant_registration_id,
-        aggregate_root_class=TenantRegistration,
+        aggregate_root_class=TenantRegistratrar,
     )
 
     registration.validate_registration_email()
@@ -47,27 +47,28 @@ async def handle_validate_tenant_email(
     await unit_of_work.repository.save(registration)
 
 
-# async def handle_user_registration(
-#     unit_of_work: UnitOfWork,
-#     command: RegisterUser,
-# ):
-#     """Initiates the registration process for a User"""
+async def handle_register_user(
+    unit_of_work: UnitOfWork,
+    command: RegisterUser,
+):
+    """Initiates the registration process for a User"""
 
-#     user_registrar = UserRegistrar()
+    user_registrar = await unit_of_work.repository.get(
+        id=command.user_registrar_id,
+    )
 
-#     user_registrar.initiate_registration(
-#         stream_id=command.user_registration_id,
-#         user_id=command.user_id,
-#         tenant_id=command.tenant_id,
-#         email=command.email,
-#         password=command.password,
-#     )
+    user_registrar.initiate_registration(
+        stream_id=command.user_registration_id,
+        user_id=command.user_id,
+        email=command.email,
+        roles=[UserRoles.TENANT_USER],  # todo: expose this as option? MT
+    )
 
-#     await unit_of_work.repository.save(user_registrar)
+    await unit_of_work.repository.save(aggregate=user_registrar)
 
 
 COMMAND_HANDLERS = {
     "RegisterTenant": handle_tenant_registration,
     "ValidateTenantEmail": handle_validate_tenant_email,
-    # "RegisterUser": handle_user_registration,
+    "RegisterUser": handle_register_user,
 }

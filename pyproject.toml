@@ -15,3 +15,6 @@ dependencies = [
     # PyJWT
     # pyjwt[crypto]
 ]
+
+[tool.pytest.ini_options]
+pythonpath = "src"

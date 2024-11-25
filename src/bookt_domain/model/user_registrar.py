@@ -31,7 +31,7 @@ class UserRegistrar(AggregateRoot):
 
     def _apply_create(self, event: UserRegistrarCreated):
         self._initialize(
-            stream_id=self.stream_id,
+            stream_id=event.stream_id,
             tenant_id=event.tenant_id,
         )
         self._created_user_ids = set()
@@ -39,6 +39,7 @@ class UserRegistrar(AggregateRoot):
     def initiate_registration(
         self,
         *,
+        stream_id: UUID | None = None,
         user_id: UUID | None = None,
         email: str,
         roles: List[UserRoles],
@@ -47,7 +48,7 @@ class UserRegistrar(AggregateRoot):
 
         self.mutate(
             event=UserRegistrationInitiated(
-                stream_id=self.stream_id,
+                stream_id=stream_id if stream_id is not None else uuid4(),
                 user_id=user_id if user_id is not None else uuid4(),
                 tenant_id=self.tenant_id,
                 email=email,
