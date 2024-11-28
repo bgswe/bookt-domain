@@ -6,7 +6,7 @@ from uuid import UUID, uuid4
 from cosmos.domain import AggregateRoot, DomainEvent
 
 
-class TenantRegistration(AggregateRoot):
+class TenantRegistratrar(AggregateRoot):
     def _mutate(self, event: DomainEvent):
         if isinstance(event, TenantRegistrationWasInitiated):
             self._apply_registration_initiated(event=event)

@@ -15,8 +15,8 @@ class ValidateTenantEmail(Command):
 
 
 class RegisterUser(Command):
+    user_registrar_id: UUID
+    email: str
+
     user_registration_id: UUID | None = None
     user_id: UUID | None = None
-    tenant_id: UUID
-    email: str
-    password: str
