@@ -7,7 +7,7 @@ from bookt_domain.model.commands import (
     ValidateTenantEmail,
 )
 from bookt_domain.model.tenant_registratrar import TenantRegistratrar
-from bookt_domain.model.user_registrar import UserRoles
+from bookt_domain.model.user_registrar import UserRegistrar, UserRoles
 
 logger = structlog.get_logger()
 
@@ -55,6 +55,7 @@ async def handle_register_user(
 
     user_registrar = await unit_of_work.repository.get(
         id=command.user_registrar_id,
+        aggregate_root_class=UserRegistrar,
     )
 
     user_registrar.initiate_registration(

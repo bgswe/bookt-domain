@@ -28,6 +28,7 @@ class UserRegistrar(AggregateRoot):
                 tenant_id=tenant_id,
             )
         )
+        return self
 
     def _apply_create(self, event: UserRegistrarCreated):
         self._initialize(
