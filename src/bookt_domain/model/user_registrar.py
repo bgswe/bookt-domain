@@ -16,49 +16,57 @@ class UserRoles(StrEnum):
 
 class UserRegistrar(AggregateRoot):
     def _mutate(self, event: DomainEvent):
-        if isinstance(event, UserRegistrarCreated):
+        if isinstance(event, UserRegistrarWasCreated):
             self._apply_create(event=event)
-        if isinstance(event, UserRegistrationInitiated):
-            self._apply_registration_initiated(event=event)
+        if isinstance(event, UserWasRegistered):
+            self._
 
-    def create(self, tenant_id: UUID):
+    def create(self, user_registrar_id: UUID):
         self.mutate(
-            event=UserRegistrarCreated(
-                stream_id=uuid4(),
-                tenant_id=tenant_id,
+            event=UserRegistrarWasCreated(
+                stream_id=user_registrar_id,
             )
         )
         return self
 
-    def _apply_create(self, event: UserRegistrarCreated):
+    def _apply_create(self, event: UserRegistrarWasCreated):
         self._initialize(
-            stream_id=event.stream_id,
-            tenant_id=event.tenant_id,
+            id=event.stream_id,
+            eligible_tenant_ids=set(),
+            created_user_ids=set(),
+            created_user_emails=set(),
         )
-        self._created_user_ids = set()
 
-    def initiate_registration(
+    def register_user(
         self,
         *,
-        stream_id: UUID | None = None,
         user_id: UUID | None = None,
         email: str,
         roles: List[UserRoles],
     ):
         """Entry point into User creation"""
 
+        if user_id is not None and self.created_user_ids.has(user_id):
+            # TODO: raise exception for user id already being created
+            raise Exception("user id has already been used")
+
+        if self.created_user_emails.has(email):
+            # TODO: raise exception for user email already being used
+            raise Exception("user email has already been used")
+
         self.mutate(
-            event=UserRegistrationInitiated(
-                stream_id=stream_id if stream_id is not None else uuid4(),
-                user_id=user_id if user_id is not None else uuid4(),
+            event=UserWasRegistered(
+                stream_id=self.id,
                 tenant_id=self.tenant_id,
+                user_id=user_id if user_id is not None else uuid4(),
                 email=email,
                 roles=roles,
             )
         )
 
-    def _apply_registration_initiated(self, event: UserRegistrationInitiated):
-        self._created_user_ids.add(event.user_id)
+    def _apply_register_user(self, event: UserWasRegistered):
+        self.created_user_ids.add(event.user_id)
+        self.created_user_emails.add(event.email)
 
         # random_password = "password"
         # hashed_password = bcrypt.hashpw(
@@ -67,16 +75,12 @@ class UserRegistrar(AggregateRoot):
         # hashed_password = hashed_password.decode("utf-8")
 
 
-class UserRegistrarCreated(DomainEvent):
-    tenant_id: UUID
+class UserRegistrarWasCreated(DomainEvent):
+    ...
 
 
-class UserRegistrationInitiated(DomainEvent):
+class UserWasRegistered(DomainEvent):
     user_id: UUID
     tenant_id: UUID
     email: str
     roles: List[UserRoles]
-
-
-class UserRegistrationCompleted(DomainEvent):
-    pass

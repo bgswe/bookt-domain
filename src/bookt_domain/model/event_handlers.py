@@ -1,24 +1,40 @@
 import structlog
 from cosmos import UnitOfWork
 
-from bookt_domain.model.tenant_registratrar import TenantRegistrationIsComplete
-from bookt_domain.model.user_registrar import UserRegistrar
+from bookt_domain.model.tenant_email_validator import (
+    TenantEmailValidator,
+    TenantEmailWasValidated,
+)
+from bookt_domain.model.tenant_registrar import TenantWasRegistered
+
+# from bookt_domain.model.user_registrar import UserRegistrar
 
 logger = structlog.get_logger()
 
 
-async def create_user_registrar_on_tenant_registration(
+async def create_tenant_email_validator_for_tenant(
     unit_of_work: UnitOfWork,
-    event: TenantRegistrationIsComplete,
+    event: TenantWasRegistered,
 ):
-    """Initiates the registration process for a User"""
+    tenant_email_validator = TenantEmailValidator()
+    tenant_email_validator.create(tenant_id=event.tenant_id)
 
-    user_registrar = UserRegistrar()
-    user_registrar = user_registrar.create(tenant_id=event.tenant_id)
+    await unit_of_work.repository.save(aggregate=tenant_email_validator)
 
-    await unit_of_work.repository.save(aggregate=user_registrar)
+
+async def add_eligible_tenant_to_user_registrar(
+    unit_of_work: UnitOfWork,
+    event: TenantEmailWasValidated,
+):
+    # user_registrar = await unit_of_work.repository.get(
+    #     id="SOME_ID",  # TODO: establish singleton id access
+    #     aggregate=UserRegistrar,
+    # )
+
+    pass
 
 
 EVENT_HANDLERS = {
-    "TenantRegistrationIsComplete": [create_user_registrar_on_tenant_registration],
+    "TenantWasRegistered": [create_tenant_email_validator_for_tenant],
+    "TenantRegistrationEmailWasValidated": [add_eligible_tenant_to_user_registrar],
 }
