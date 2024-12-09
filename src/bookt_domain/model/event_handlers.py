@@ -6,8 +6,7 @@ from bookt_domain.model.tenant_email_validator import (
     TenantEmailWasValidated,
 )
 from bookt_domain.model.tenant_registrar import TenantWasRegistered
-
-# from bookt_domain.model.user_registrar import UserRegistrar
+from bookt_domain.model.user_registrar import UserRegistrar
 
 logger = structlog.get_logger()
 
@@ -26,12 +25,13 @@ async def add_eligible_tenant_to_user_registrar(
     unit_of_work: UnitOfWork,
     event: TenantEmailWasValidated,
 ):
-    # user_registrar = await unit_of_work.repository.get(
-    #     id="SOME_ID",  # TODO: establish singleton id access
-    #     aggregate=UserRegistrar,
-    # )
+    registrar = await unit_of_work.repository.get_singleton(
+        aggregate=UserRegistrar,
+    )
 
-    pass
+    registrar.add_eligible_tenant_id(tenant_id=event.tenant_id)
+
+    await unit_of_work.repository.save(aggregate=registrar)
 
 
 EVENT_HANDLERS = {

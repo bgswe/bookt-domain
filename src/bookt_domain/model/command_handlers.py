@@ -1,11 +1,14 @@
 import structlog
 from cosmos import UnitOfWork
 
-from bookt_domain.model.commands import RegisterTenant, ValidateTenantEmail
+from bookt_domain.model.commands import (
+    RegisterTenant,
+    RegisterUser,
+    ValidateTenantEmail,
+)
 from bookt_domain.model.tenant_email_validator import TenantEmailValidator
 from bookt_domain.model.tenant_registrar import TenantRegistrar
-
-# from bookt_domain.model.user_registrar import UserRegistrar, UserRoles
+from bookt_domain.model.user_registrar import UserRegistrar, UserRoles
 
 logger = structlog.get_logger()
 
@@ -48,29 +51,28 @@ async def handle_validate_tenant_email(
     await unit_of_work.repository.save(validator)
 
 
-# async def handle_register_user(
-#     unit_of_work: UnitOfWork,
-#     command: RegisterUser,
-# ):
-#     """Initiates the registration process for a User"""
+async def handle_register_user(
+    unit_of_work: UnitOfWork,
+    command: RegisterUser,
+):
+    """Initiates the registration process for a User"""
 
-#     user_registrar = await unit_of_work.repository.get(
-#         id=command.user_registrar_id,
-#         aggregate_root_class=UserRegistrar,
-#     )
+    user_registrar = await unit_of_work.repository.get_singleton(
+        aggregate_root_class=UserRegistrar,
+    )
 
-#     user_registrar.initiate_registration(
-#         stream_id=command.user_registration_id,
-#         user_id=command.user_id,
-#         email=command.email,
-#         roles=[UserRoles.TENANT_USER],  # todo: expose this as option? MT
-#     )
+    user_registrar.register_user(
+        tenant_id=command.tenant_id,
+        user_id=command.user_id,
+        email=command.email,
+        roles=[UserRoles.TENANT_USER],  # TODO: Implement the ability to specify
+    )
 
-#     await unit_of_work.repository.save(aggregate=user_registrar)
+    await unit_of_work.repository.save(aggregate=user_registrar)
 
 
 COMMAND_HANDLERS = {
     "RegisterTenant": handle_tenant_registration,
     "ValidateTenantEmail": handle_validate_tenant_email,
-    # "RegisterUser": handle_register_user,
+    "RegisterUser": handle_register_user,
 }

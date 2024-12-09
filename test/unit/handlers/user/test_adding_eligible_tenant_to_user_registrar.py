@@ -1,0 +1,1 @@
+# test add_eligible_tenant_to_user_registrar
