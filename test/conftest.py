@@ -19,7 +19,7 @@ def mock_uow():
 
 @pytest.fixture
 def mock_tenant_registrar():
-    mock_tenant_id = uuid4()
+    mock_registrar_id = uuid4()
     mock_registrar = TenantRegistrar()
-    mock_registrar.create(tenant_registrar_id=mock_tenant_id)
+    mock_registrar.create(tenant_registrar_id=mock_registrar_id)
     return mock_registrar
