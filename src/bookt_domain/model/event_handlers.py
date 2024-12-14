@@ -36,5 +36,5 @@ async def add_eligible_tenant_to_user_registrar(
 
 EVENT_HANDLERS = {
     "TenantWasRegistered": [create_tenant_email_validator_for_tenant],
-    "TenantRegistrationEmailWasValidated": [add_eligible_tenant_to_user_registrar],
+    "TenantEmailWasValidated": [add_eligible_tenant_to_user_registrar],
 }
