@@ -35,7 +35,7 @@ class TenantEmailValidator(AggregateRoot):
             id=event.stream_id,
             tenant_id=event.tenant_id,
             is_validated=False,
-            validation_key=f"{event.stream_id}.{uuid4().hex}",
+            validation_key=f"{event.stream_id}.{'SOME_KEY'}",
         )
 
     def validate_email(self, validation_key: str):
