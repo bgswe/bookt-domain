@@ -26,7 +26,7 @@ async def add_eligible_tenant_to_user_registrar(
     event: TenantEmailWasValidated,
 ):
     registrar = await unit_of_work.repository.get_singleton(
-        aggregate=UserRegistrar,
+        aggregate_root_class=UserRegistrar,
     )
 
     registrar.add_eligible_tenant_id(tenant_id=event.tenant_id)
