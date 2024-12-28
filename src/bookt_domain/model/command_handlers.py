@@ -96,4 +96,5 @@ COMMAND_HANDLERS = {
     "RegisterTenant": handle_tenant_registration,
     "ValidateTenantEmail": handle_validate_tenant_email,
     "RegisterUser": handle_register_user,
+    "ValidateUserEmail": handle_validate_user_email,
 }
