@@ -5,9 +5,11 @@ from bookt_domain.model.commands import (
     RegisterTenant,
     RegisterUser,
     ValidateTenantEmail,
+    ValidateUserEmail,
 )
 from bookt_domain.model.tenant_email_validator import TenantEmailValidator
 from bookt_domain.model.tenant_registrar import TenantRegistrar
+from bookt_domain.model.user_email_validator import UserEmailValidator
 from bookt_domain.model.user_registrar import UserRegistrar, UserRoles
 
 logger = structlog.get_logger()
@@ -69,6 +71,25 @@ async def handle_register_user(
     )
 
     await unit_of_work.repository.save(aggregate=user_registrar)
+
+
+async def handle_validate_user_email(
+    unit_of_work: UnitOfWork,
+    command: ValidateUserEmail,
+):
+    """Confirm the validation of the user's email"""
+
+    # extract id from validation key
+    validator_id = command.validation_key.split(".")[0]
+
+    validator = await unit_of_work.repository.get(
+        id=validator_id,
+        aggregate_root_class=UserEmailValidator,
+    )
+
+    validator.validate_email(validation_key=command.validation_key)
+
+    await unit_of_work.repository.save(validator)
 
 
 COMMAND_HANDLERS = {

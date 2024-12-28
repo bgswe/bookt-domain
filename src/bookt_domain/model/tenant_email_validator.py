@@ -12,7 +12,7 @@ class TenantEmailWasValidated(DomainEvent):
     tenant_id: UUID
 
 
-class TenantValidationKeyWasIncorrect(Exception):
+class TenantEmailValidationKeyWasIncorrect(Exception):
     ...
 
 
@@ -44,7 +44,7 @@ class TenantEmailValidator(AggregateRoot):
 
     def validate_email(self, validation_key: str):
         if validation_key != self.validation_key:
-            raise TenantValidationKeyWasIncorrect
+            raise TenantEmailValidationKeyWasIncorrect
 
         self.mutate(
             TenantEmailWasValidated(

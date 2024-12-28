@@ -4,8 +4,8 @@ from uuid import uuid4
 import pytest
 
 from bookt_domain.model.tenant_email_validator import (
+    TenantEmailValidationKeyWasIncorrect,
     TenantEmailValidator,
-    TenantValidationKeyWasIncorrect,
 )
 
 
@@ -58,7 +58,7 @@ def test_validate_email_errs_on_incorrect_validation_key():
     registrar = TenantEmailValidator()
     registrar.create(tenant_id=uuid4())
 
-    with pytest.raises(TenantValidationKeyWasIncorrect):
+    with pytest.raises(TenantEmailValidationKeyWasIncorrect):
         registrar.validate_email(validation_key="WRONG KEY")
 
     assert not registrar.is_validated

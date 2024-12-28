@@ -17,3 +17,7 @@ class RegisterUser(Command):
     tenant_id: UUID
     user_id: UUID | None = None
     email: str
+
+
+class ValidateUserEmail(Command):
+    validation_key: str
