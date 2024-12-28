@@ -3,7 +3,7 @@ from uuid import uuid4
 
 import pytest
 
-from bookt_domain.model.event_handlers import create_tenant_email_validator_for_tenant
+from bookt_domain.model.event_handlers import create_tenant_email_validator
 from bookt_domain.model.tenant_registrar import TenantWasRegistered
 
 
@@ -24,9 +24,7 @@ async def test_create_tenant_email_validator_for_tenant(
         tenant_email=mock_tenant_email,
     )
 
-    await create_tenant_email_validator_for_tenant(
-        unit_of_work=mock_uow, event=mock_event
-    )
+    await create_tenant_email_validator(unit_of_work=mock_uow, event=mock_event)
 
     mock_validator_create.assert_called_once_with(tenant_id=mock_tenant_id)
     mock_uow.repository.save.assert_called_once()

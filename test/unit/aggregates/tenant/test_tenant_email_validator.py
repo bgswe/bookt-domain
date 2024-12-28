@@ -12,10 +12,10 @@ from bookt_domain.model.tenant_email_validator import (
 def test_validator_create_is_success():
     mock_tenant_id = uuid4()
 
-    registrar = TenantEmailValidator()
-    registrar.create(tenant_id=mock_tenant_id)
+    validator = TenantEmailValidator()
+    validator.create(tenant_id=mock_tenant_id)
 
-    assert registrar.tenant_id == mock_tenant_id
+    assert validator.tenant_id == mock_tenant_id
 
 
 def test_validator_is_not_validated_after_creation():

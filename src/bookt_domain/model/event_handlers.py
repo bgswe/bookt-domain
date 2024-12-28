@@ -6,12 +6,13 @@ from bookt_domain.model.tenant_email_validator import (
     TenantEmailWasValidated,
 )
 from bookt_domain.model.tenant_registrar import TenantWasRegistered
-from bookt_domain.model.user_registrar import UserRegistrar
+from bookt_domain.model.user_email_validator import UserEmailValidator
+from bookt_domain.model.user_registrar import UserRegistrar, UserWasRegistered
 
 logger = structlog.get_logger()
 
 
-async def create_tenant_email_validator_for_tenant(
+async def create_tenant_email_validator(
     unit_of_work: UnitOfWork,
     event: TenantWasRegistered,
 ):
@@ -34,7 +35,18 @@ async def add_eligible_tenant_to_user_registrar(
     await unit_of_work.repository.save(aggregate=registrar)
 
 
+async def create_user_email_validator(
+    unit_of_work: UnitOfWork,
+    event: UserWasRegistered,
+):
+    user_email_validator = UserEmailValidator()
+    user_email_validator.create(user_id=event.user_id)
+
+    await unit_of_work.repository.save(aggregate=user_email_validator)
+
+
 EVENT_HANDLERS = {
-    "TenantWasRegistered": [create_tenant_email_validator_for_tenant],
+    "TenantWasRegistered": [create_tenant_email_validator],
     "TenantEmailWasValidated": [add_eligible_tenant_to_user_registrar],
+    "UserWasRegistered": [create_user_email_validator],
 }

@@ -26,7 +26,9 @@ async def test_add_eligible_tenant_to_user_registrar_is_success(
 
     await add_eligible_tenant_to_user_registrar(unit_of_work=mock_uow, event=mock_event)
 
-    mock_uow.repository.get_singleton.assert_called_once_with(aggregate=UserRegistrar)
+    mock_uow.repository.get_singleton.assert_called_once_with(
+        aggregate_root_class=UserRegistrar
+    )
     mock_user_registrar.add_eligible_tenant_id.assert_called_once_with(
         tenant_id=mock_tenant_id
     )
