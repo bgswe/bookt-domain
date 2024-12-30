@@ -3,8 +3,8 @@ from uuid import uuid4
 
 import pytest
 
+from bookt_domain.model.aggregates.tenant.tenant_registrar import TenantWasRegistered
 from bookt_domain.model.event_handlers import create_tenant_email_validator
-from bookt_domain.model.tenant_registrar import TenantWasRegistered
 
 
 @patch("bookt_domain.model.event_handlers.TenantEmailValidator.create")

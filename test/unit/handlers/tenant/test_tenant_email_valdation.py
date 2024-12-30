@@ -2,9 +2,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from bookt_domain.model.aggregates.tenant.tenant_email_validator import (
+    TenantEmailValidator,
+)
 from bookt_domain.model.command_handlers import handle_validate_tenant_email
 from bookt_domain.model.commands import ValidateTenantEmail
-from bookt_domain.model.tenant_email_validator import TenantEmailValidator
 
 
 @pytest.mark.asyncio

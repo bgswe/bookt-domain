@@ -3,9 +3,9 @@ from uuid import uuid4
 
 import pytest
 
+from bookt_domain.model.aggregates.tenant.tenant_registrar import TenantRegistrar
 from bookt_domain.model.command_handlers import handle_tenant_registration
 from bookt_domain.model.commands import RegisterTenant
-from bookt_domain.model.tenant_registrar import TenantRegistrar
 
 
 @pytest.mark.asyncio

@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from bookt_domain.model.tenant_registrar import TenantRegistrar
+from bookt_domain.model.aggregates.tenant.tenant_registrar import TenantRegistrar
 
 
 def test_registrar_create_is_success():

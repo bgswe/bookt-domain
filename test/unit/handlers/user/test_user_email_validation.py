@@ -2,9 +2,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from bookt_domain.model.aggregates.user.user_email_validator import UserEmailValidator
 from bookt_domain.model.command_handlers import handle_validate_user_email
 from bookt_domain.model.commands import ValidateUserEmail
-from bookt_domain.model.user_email_validator import UserEmailValidator
 
 
 @pytest.mark.asyncio

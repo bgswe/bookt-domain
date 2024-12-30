@@ -3,8 +3,11 @@ from uuid import uuid4
 
 import pytest
 
+from bookt_domain.model.aggregates.user.user_registrar import (
+    UserRoles,
+    UserWasRegistered,
+)
 from bookt_domain.model.event_handlers import create_user_email_validator
-from bookt_domain.model.user_registrar import UserRoles, UserWasRegistered
 
 
 @patch("bookt_domain.model.event_handlers.UserEmailValidator.create")

@@ -1,13 +1,16 @@
 import structlog
 from cosmos import UnitOfWork
 
-from bookt_domain.model.tenant_email_validator import (
+from bookt_domain.model.aggregates.tenant.tenant_email_validator import (
     TenantEmailValidator,
     TenantEmailWasValidated,
 )
-from bookt_domain.model.tenant_registrar import TenantWasRegistered
-from bookt_domain.model.user_email_validator import UserEmailValidator
-from bookt_domain.model.user_registrar import UserRegistrar, UserWasRegistered
+from bookt_domain.model.aggregates.tenant.tenant_registrar import TenantWasRegistered
+from bookt_domain.model.aggregates.user.user_email_validator import UserEmailValidator
+from bookt_domain.model.aggregates.user.user_registrar import (
+    UserRegistrar,
+    UserWasRegistered,
+)
 
 logger = structlog.get_logger()
 

@@ -3,7 +3,7 @@ from uuid import uuid4
 
 import pytest
 
-from bookt_domain.model.tenant_email_validator import (
+from bookt_domain.model.aggregates.tenant.tenant_email_validator import (
     TenantEmailValidationKeyWasIncorrect,
     TenantEmailValidator,
 )
@@ -25,7 +25,7 @@ def test_validator_is_not_validated_after_creation():
     assert not registrar.is_validated
 
 
-@patch("bookt_domain.model.tenant_email_validator.uuid4")
+@patch("bookt_domain.model.aggregates.tenant.tenant_email_validator.uuid4")
 def test_validator_key_is_constructed_from_validator_id_and_uuid_hex_str(mock_uuid4):
     mock_uuid = uuid4()
     mock_uuid4.return_value = mock_uuid
@@ -37,7 +37,7 @@ def test_validator_key_is_constructed_from_validator_id_and_uuid_hex_str(mock_uu
     assert registrar.validation_key == f"{registrar.id}.{mock_uuid.hex}"
 
 
-@patch("bookt_domain.model.tenant_email_validator.uuid4")
+@patch("bookt_domain.model.aggregates.tenant.tenant_email_validator.uuid4")
 def test_validate_email_is_success(mock_uuid4):
     mock_uuid = uuid4()
     mock_uuid4.return_value = mock_uuid

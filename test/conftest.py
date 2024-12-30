@@ -3,7 +3,7 @@ from uuid import uuid4
 
 import pytest
 
-from bookt_domain.model.tenant_registrar import TenantRegistrar
+from bookt_domain.model.aggregates.tenant.tenant_registrar import TenantRegistrar
 
 pytest_plugins = ("pytest_asyncio",)
 

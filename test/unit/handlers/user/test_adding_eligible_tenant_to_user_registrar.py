@@ -3,9 +3,11 @@ from uuid import uuid4
 
 import pytest
 
+from bookt_domain.model.aggregates.tenant.tenant_email_validator import (
+    TenantEmailWasValidated,
+)
+from bookt_domain.model.aggregates.user.user_registrar import UserRegistrar
 from bookt_domain.model.event_handlers import add_eligible_tenant_to_user_registrar
-from bookt_domain.model.tenant_email_validator import TenantEmailWasValidated
-from bookt_domain.model.user_registrar import UserRegistrar
 
 
 @patch("bookt_domain.model.event_handlers.TenantEmailValidator.create")

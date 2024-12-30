@@ -3,9 +3,9 @@ from uuid import uuid4
 
 import pytest
 
+from bookt_domain.model.aggregates.user.user_registrar import UserRegistrar, UserRoles
 from bookt_domain.model.command_handlers import handle_register_user
 from bookt_domain.model.commands import RegisterUser
-from bookt_domain.model.user_registrar import UserRegistrar, UserRoles
 
 
 @pytest.mark.asyncio
