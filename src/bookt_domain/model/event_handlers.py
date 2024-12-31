@@ -6,7 +6,11 @@ from bookt_domain.model.aggregates.tenant.tenant_email_validator import (
     TenantEmailWasValidated,
 )
 from bookt_domain.model.aggregates.tenant.tenant_registrar import TenantWasRegistered
-from bookt_domain.model.aggregates.user.user_email_validator import UserEmailValidator
+from bookt_domain.model.aggregates.user.user_email_validator import (
+    UserEmailValidator,
+    UserEmailWasValidated,
+)
+from bookt_domain.model.aggregates.user.user_password_manager import UserPasswordManager
 from bookt_domain.model.aggregates.user.user_registrar import (
     UserRegistrar,
     UserWasRegistered,
@@ -48,8 +52,19 @@ async def create_user_email_validator(
     await unit_of_work.repository.save(aggregate=user_email_validator)
 
 
+async def create_user_password_manager(
+    unit_of_work: UnitOfWork,
+    event: UserEmailWasValidated,
+):
+    password_manager = UserPasswordManager()
+    password_manager.create(user_id=event.user_id)
+
+    await unit_of_work.repository.save(aggregate=password_manager)
+
+
 EVENT_HANDLERS = {
     "TenantWasRegistered": [create_tenant_email_validator],
     "TenantEmailWasValidated": [add_eligible_tenant_to_user_registrar],
+    "UserEmailWasValidated": [create_user_password_manager],
     "UserWasRegistered": [create_user_email_validator],
 }
