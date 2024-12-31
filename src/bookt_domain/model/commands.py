@@ -9,8 +9,8 @@ class RegisterTenant(Command):
     tenant_registration_email: str
 
 
-class ValidateTenantEmail(Command):
-    validation_key: str
+class VerifyTenantEmail(Command):
+    verification_key: str
 
 
 class RegisterUser(Command):
@@ -19,8 +19,8 @@ class RegisterUser(Command):
     email: str
 
 
-class ValidateUserEmail(Command):
-    validation_key: str
+class VerifyUserEmail(Command):
+    verification_key: str
 
 
 class SetUserPassword(Command):

@@ -1,19 +1,19 @@
 import structlog
 from cosmos import UnitOfWork
 
-from bookt_domain.model.aggregates.tenant.tenant_email_validator import (
-    TenantEmailValidator,
+from bookt_domain.model.aggregates.tenant.tenant_email_verifier import (
+    TenantEmailVerifier,
 )
 from bookt_domain.model.aggregates.tenant.tenant_registrar import TenantRegistrar
-from bookt_domain.model.aggregates.user.user_email_validator import UserEmailValidator
+from bookt_domain.model.aggregates.user.user_email_verifier import UserEmailVerifier
 from bookt_domain.model.aggregates.user.user_password_manager import UserPasswordManager
 from bookt_domain.model.aggregates.user.user_registrar import UserRegistrar, UserRoles
 from bookt_domain.model.commands import (
     RegisterTenant,
     RegisterUser,
     SetUserPassword,
-    ValidateTenantEmail,
-    ValidateUserEmail,
+    VerifyTenantEmail,
+    VerifyUserEmail,
 )
 
 logger = structlog.get_logger()
@@ -38,23 +38,23 @@ async def handle_tenant_registration(
     await unit_of_work.repository.save(aggregate=registrar)
 
 
-async def handle_validate_tenant_email(
+async def handle_verify_tenant_email(
     unit_of_work: UnitOfWork,
-    command: ValidateTenantEmail,
+    command: VerifyTenantEmail,
 ):
-    """Confirm the validation of the tenant's registration email"""
+    """Verify the email provided on tenant registration"""
 
-    # extract id from validation key
-    validator_id = command.validation_key.split(".")[0]
+    # extract id from verification key
+    verifier_id = command.verification_key.split(".")[0]
 
-    validator = await unit_of_work.repository.get(
-        id=validator_id,
-        aggregate_root_class=TenantEmailValidator,
+    verifier = await unit_of_work.repository.get(
+        id=verifier_id,
+        aggregate_root_class=TenantEmailVerifier,
     )
 
-    validator.validate_email(validation_key=command.validation_key)
+    verifier.verify_email(verification_key=command.verification_key)
 
-    await unit_of_work.repository.save(validator)
+    await unit_of_work.repository.save(verifier)
 
 
 async def handle_register_user(
@@ -77,23 +77,23 @@ async def handle_register_user(
     await unit_of_work.repository.save(aggregate=user_registrar)
 
 
-async def handle_validate_user_email(
+async def handle_verify_user_email(
     unit_of_work: UnitOfWork,
-    command: ValidateUserEmail,
+    command: VerifyUserEmail,
 ):
-    """Confirm the validation of the user's email"""
+    """Verify the mail provided by the user"""
 
-    # extract id from validation key
-    validator_id = command.validation_key.split(".")[0]
+    # extract id from verification key
+    verifier_id = command.verification_key.split(".")[0]
 
-    validator = await unit_of_work.repository.get(
-        id=validator_id,
-        aggregate_root_class=UserEmailValidator,
+    verifier = await unit_of_work.repository.get(
+        id=verifier_id,
+        aggregate_root_class=UserEmailVerifier,
     )
 
-    validator.validate_email(validation_key=command.validation_key)
+    verifier.verify_email(verification_key=command.verification_key)
 
-    await unit_of_work.repository.save(aggregate=validator)
+    await unit_of_work.repository.save(aggregate=verifier)
 
 
 async def handle_set_user_password(
@@ -118,8 +118,8 @@ async def handle_set_user_password(
 
 COMMAND_HANDLERS = {
     "RegisterTenant": handle_tenant_registration,
-    "ValidateTenantEmail": handle_validate_tenant_email,
+    "VerifyTenantEmail": handle_verify_tenant_email,
     "RegisterUser": handle_register_user,
-    "ValidateUserEmail": handle_validate_user_email,
+    "VerifyUserEmail": handle_verify_user_email,
     "SetUserPassword": handle_set_user_password,
 }

@@ -1,25 +1,22 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 from uuid import uuid4
 
 import pytest
 
-from bookt_domain.model.aggregates.tenant.tenant_email_validator import (
-    TenantEmailWasValidated,
+from bookt_domain.model.aggregates.tenant.tenant_email_verifier import (
+    TenantEmailWasVerified,
 )
 from bookt_domain.model.aggregates.user.user_registrar import UserRegistrar
 from bookt_domain.model.event_handlers import add_eligible_tenant_to_user_registrar
 
 
-@patch("bookt_domain.model.event_handlers.TenantEmailValidator.create")
 @pytest.mark.asyncio
-async def test_add_eligible_tenant_to_user_registrar_is_success(
-    mock_validator_create, make_mock_uow
-):
-    mock_validator_id = uuid4()
+async def test_add_eligible_tenant_to_user_registrar_is_success(make_mock_uow):
+    mock_verifier_id = uuid4()
     mock_tenant_id = uuid4()
 
-    mock_event = TenantEmailWasValidated(
-        stream_id=mock_validator_id,
+    mock_event = TenantEmailWasVerified(
+        stream_id=mock_verifier_id,
         tenant_id=mock_tenant_id,
     )
 
