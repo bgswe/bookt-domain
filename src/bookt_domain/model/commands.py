@@ -21,3 +21,8 @@ class RegisterUser(Command):
 
 class ValidateUserEmail(Command):
     validation_key: str
+
+
+class SetUserPassword(Command):
+    set_password_key: str
+    password: str

@@ -6,10 +6,12 @@ from bookt_domain.model.aggregates.tenant.tenant_email_validator import (
 )
 from bookt_domain.model.aggregates.tenant.tenant_registrar import TenantRegistrar
 from bookt_domain.model.aggregates.user.user_email_validator import UserEmailValidator
+from bookt_domain.model.aggregates.user.user_password_manager import UserPasswordManager
 from bookt_domain.model.aggregates.user.user_registrar import UserRegistrar, UserRoles
 from bookt_domain.model.commands import (
     RegisterTenant,
     RegisterUser,
+    SetUserPassword,
     ValidateTenantEmail,
     ValidateUserEmail,
 )
@@ -91,7 +93,27 @@ async def handle_validate_user_email(
 
     validator.validate_email(validation_key=command.validation_key)
 
-    await unit_of_work.repository.save(validator)
+    await unit_of_work.repository.save(aggregate=validator)
+
+
+async def handle_set_user_password(
+    unit_of_work: UnitOfWork,
+    command: SetUserPassword,
+):
+    # extract stream id from set password key
+    password_manager_id = command.set_password_key.split(".")[0]
+
+    password_manager = await unit_of_work.repository.get(
+        id=password_manager_id,
+        aggregate_root_class=UserPasswordManager,
+    )
+
+    password_manager.set_password(
+        key=command.set_password_key,
+        password=command.password,
+    )
+
+    await unit_of_work.repository.save(aggregate=password_manager)
 
 
 COMMAND_HANDLERS = {
@@ -99,4 +121,5 @@ COMMAND_HANDLERS = {
     "ValidateTenantEmail": handle_validate_tenant_email,
     "RegisterUser": handle_register_user,
     "ValidateUserEmail": handle_validate_user_email,
+    "SetUserPassword": handle_set_user_password,
 }
