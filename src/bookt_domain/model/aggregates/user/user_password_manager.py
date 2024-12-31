@@ -1,5 +1,6 @@
 from uuid import UUID, uuid4
 
+import bcrypt
 from cosmos.domain import AggregateRoot, DomainEvent
 
 
@@ -47,12 +48,16 @@ class UserPasswordManager(AggregateRoot):
 
         # NOTE: Reject change if not None, and key doesn't match current reset key
 
-        # NOTE: Need to adjudicate and hash password here
+        # NOTE: Need to adjudicate password rules here
+
+        password_bytes = password.encode("utf-8")
+        password_salt = bcrypt.gensalt()
+        password_hash = bcrypt.hashpw(password=password_bytes, salt=password_salt)
 
         self.mutate(
             event=UserPasswordWasUpdated(
                 stream_id=self.id,
                 user_id=self.user_id,
-                new_hashed_password=f"HASHED VERSION OF {password}",
+                new_hashed_password=password_hash,
             )
         )
