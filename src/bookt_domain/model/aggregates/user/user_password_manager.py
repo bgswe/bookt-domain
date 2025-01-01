@@ -22,13 +22,15 @@ class UserPasswordManager(AggregateRoot):
     def _mutate(self, event: DomainEvent):
         if isinstance(event, UserPasswordManagerWasCreated):
             self._apply_created(event=event)
+        elif isinstance(event, UserPasswordWasUpdated):
+            self._apply_password_was_updated(event=event)
 
     def _apply_created(self, event: UserPasswordManagerWasCreated):
         self._initialize(
             id=event.stream_id,
             user_id=event.user_id,
             initial_password_key=event.initial_password_key,
-            hashed_password=None,
+            password_history=set(),
         )
 
     def create(self, user_id: UUID):
@@ -42,11 +44,17 @@ class UserPasswordManager(AggregateRoot):
             )
         )
 
+    def _apply_password_was_updated(self, event: UserPasswordWasUpdated):
+        self.password_history.add(event.new_hashed_password)
+        self.initial_password_key = None
+
     def set_password(self, key: str, password: str):
-        if self.hashed_password is None and key != self.initial_password_key:
+        if not self.password_history and key != self.initial_password_key:
             raise SetPasswordKeyWasInvalid
 
         # NOTE: Reject change if not None, and key doesn't match current reset key
+        # if self.password_history and key != self.current_password_key:
+        #   raise SetPasswordKeyWasInvalid
 
         # NOTE: Need to adjudicate password rules here
 

@@ -27,13 +27,10 @@ def test_user_password_manager_create():
     )
 
     assert password_manager.user_id == mock_user_id
-    assert password_manager.hashed_password is None
 
 
 def test_user_set_password_is_success(password_manager):
     manager, _ = password_manager
-
-    assert manager.hashed_password is None
 
     manager.set_password(
         key=manager.initial_password_key,
@@ -44,7 +41,8 @@ def test_user_set_password_is_success(password_manager):
 def test_user_set_password_key_is_invalid(password_manager):
     manager, _ = password_manager
 
-    assert manager.hashed_password is None
-
     with pytest.raises(SetPasswordKeyWasInvalid):
         manager.set_password(key="OBVIOUSLY WRONG KEY", password="PASSWORD")
+
+
+# def test_user_password_manager
