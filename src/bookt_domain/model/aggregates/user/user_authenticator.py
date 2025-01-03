@@ -14,6 +14,10 @@ class UserWasAuthenticated(DomainEvent):
     timestamp: dt
 
 
+class UserAuthenticatorCurrentPasswordHashWasUpdated(DomainEvent):
+    current_password_hash: str
+
+
 class IncorrectPasswordProvided(Exception):
     ...
 
@@ -22,12 +26,14 @@ class AuthenticationAttemptWithNoSetPassword(Exception):
     ...
 
 
-class UserEmailVerifier(AggregateRoot):
+class UserAuthenticator(AggregateRoot):
     def _mutate(self, event: DomainEvent):
         if isinstance(event, UserAuthenticatorWasCreated):
             self._apply_authenticator_was_created(event=event)
         elif isinstance(event, UserWasAuthenticated):
             self._apply_user_was_authenticated(event=event)
+        elif isinstance(event, UserAuthenticatorCurrentPasswordHashWasUpdated):
+            self._apply_current_password_hash_was_updated(event=event)
 
     def create(self, user_id: UUID):
         self.mutate(
@@ -66,3 +72,16 @@ class UserEmailVerifier(AggregateRoot):
     def _apply_user_was_authenticated(self, event: UserWasAuthenticated):
         self.authentication_count += 1
         self.last_authentication = event.timestamp
+
+    def update_current_password_hash(self, password_hash: str):
+        self.mutate(
+            event=UserAuthenticatorCurrentPasswordHashWasUpdated(
+                stream_id=self.id,
+                current_password_hash=password_hash,
+            )
+        )
+
+    def _apply_current_password_hash_was_updated(
+        self, event: UserAuthenticatorCurrentPasswordHashWasUpdated
+    ):
+        self.password_hash = event.current_password_hash
