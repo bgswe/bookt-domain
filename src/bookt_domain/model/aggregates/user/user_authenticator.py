@@ -2,6 +2,7 @@ from datetime import datetime as dt
 from datetime import timezone
 from uuid import UUID, uuid4
 
+import bcrypt
 from cosmos.domain import AggregateRoot, DomainEvent
 
 
@@ -58,7 +59,10 @@ class UserAuthenticator(AggregateRoot):
             raise AuthenticationAttemptWithNoSetPassword
 
         # compare provided password to stored hash w/ bcrypt
-        if self.password_hash != password:  # not right, very bad, change
+        if not bcrypt.checkpw(
+            password.encode("utf-8"),
+            self.password_hash.encode("utf-8"),
+        ):
             raise IncorrectPasswordProvided
 
         self.mutate(
