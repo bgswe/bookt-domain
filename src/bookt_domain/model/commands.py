@@ -26,3 +26,8 @@ class VerifyUserEmail(Command):
 class SetUserPassword(Command):
     set_password_key: str
     password: str
+
+
+class AuthenticateUser(Command):
+    user_authenticator_id: UUID
+    password: str

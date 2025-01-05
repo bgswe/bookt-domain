@@ -1,5 +1,5 @@
 import structlog
-from cosmos import UnitOfWork
+from cosmos import UnitOfWork, command
 
 from bookt_domain.model.aggregates.tenant.tenant_email_verifier import (
     TenantEmailVerifier,
@@ -19,6 +19,7 @@ from bookt_domain.model.commands import (
 logger = structlog.get_logger()
 
 
+@command(command_type_name="RegisterTenant")
 async def handle_tenant_registration(
     unit_of_work: UnitOfWork,
     command: RegisterTenant,
@@ -38,6 +39,7 @@ async def handle_tenant_registration(
     await unit_of_work.repository.save(aggregate=registrar)
 
 
+@command(command_type_name="VerifyTenantEmail")
 async def handle_verify_tenant_email(
     unit_of_work: UnitOfWork,
     command: VerifyTenantEmail,
@@ -57,6 +59,7 @@ async def handle_verify_tenant_email(
     await unit_of_work.repository.save(verifier)
 
 
+@command(command_type_name="RegisterUser")
 async def handle_register_user(
     unit_of_work: UnitOfWork,
     command: RegisterUser,
@@ -77,6 +80,7 @@ async def handle_register_user(
     await unit_of_work.repository.save(aggregate=user_registrar)
 
 
+@command(command_type_name="VerifyUserEmail")
 async def handle_verify_user_email(
     unit_of_work: UnitOfWork,
     command: VerifyUserEmail,
@@ -96,6 +100,7 @@ async def handle_verify_user_email(
     await unit_of_work.repository.save(aggregate=verifier)
 
 
+@command(command_type_name="SetUserPassword")
 async def handle_set_user_password(
     unit_of_work: UnitOfWork,
     command: SetUserPassword,
@@ -114,12 +119,3 @@ async def handle_set_user_password(
     )
 
     await unit_of_work.repository.save(aggregate=password_manager)
-
-
-COMMAND_HANDLERS = {
-    "RegisterTenant": handle_tenant_registration,
-    "VerifyTenantEmail": handle_verify_tenant_email,
-    "RegisterUser": handle_register_user,
-    "VerifyUserEmail": handle_verify_user_email,
-    "SetUserPassword": handle_set_user_password,
-}
