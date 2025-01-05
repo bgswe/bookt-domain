@@ -5,6 +5,10 @@ from uuid import UUID, uuid4
 from cosmos.domain import AggregateRoot, DomainEvent
 
 
+class TenantIDAlreadyRegistered(Exception):
+    ...
+
+
 class TenantRegistrar(AggregateRoot):
     def _mutate(self, event: DomainEvent):
         if isinstance(event, TenantRegistrarWasCreated):
@@ -35,8 +39,7 @@ class TenantRegistrar(AggregateRoot):
         """Attempt to register a new tenant into the system."""
 
         if tenant_id is not None and tenant_id in self.registered_tenant_ids:
-            # TODO: raise exception for duplicate ID
-            pass
+            raise TenantIDAlreadyRegistered
 
         self.mutate(
             TenantWasRegistered(
