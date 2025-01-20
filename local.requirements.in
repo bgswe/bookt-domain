@@ -1,0 +1,6 @@
+cosmos @ git+https://github.com/bgswe/cosmos
+bcrypt
+
+structlog
+pytest
+pytest-asyncio

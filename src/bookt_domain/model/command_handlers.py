@@ -5,10 +5,12 @@ from bookt_domain.model.aggregates.tenant.tenant_email_verifier import (
     TenantEmailVerifier,
 )
 from bookt_domain.model.aggregates.tenant.tenant_registrar import TenantRegistrar
+from bookt_domain.model.aggregates.user.user_authenticator import UserAuthenticator
 from bookt_domain.model.aggregates.user.user_email_verifier import UserEmailVerifier
 from bookt_domain.model.aggregates.user.user_password_manager import UserPasswordManager
 from bookt_domain.model.aggregates.user.user_registrar import UserRegistrar, UserRoles
 from bookt_domain.model.commands import (
+    AuthenticateUser,
     RegisterTenant,
     RegisterUser,
     SetUserPassword,
@@ -119,3 +121,18 @@ async def handle_set_user_password(
     )
 
     await unit_of_work.repository.save(aggregate=password_manager)
+
+
+@command(command_type_name="AuthenticateUser")
+async def handle_authenticate_user(
+    unit_of_work: UnitOfWork,
+    command: AuthenticateUser,
+):
+    authenticator = await unit_of_work.repository.get(
+        id=command.user_authenticator_id,
+        aggregate_root_class=UserAuthenticator,
+    )
+
+    authenticator.authenticate(password=command.password)
+
+    await unit_of_work.repository.save(aggregate=authenticator)

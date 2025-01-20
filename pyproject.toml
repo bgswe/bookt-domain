@@ -4,16 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bookt-domain"
-version = "0.0.0"
+version = "0.0.1"
 dependencies = [
-    "bcrypt",
     "cosmos @ git+https://github.com/bgswe/cosmos",
-    # -----
-    # These might be needed, but likely used elsewhere
-    # when implementing authN/authZ
-    # -----
-    # PyJWT
-    # pyjwt[crypto]
+    "bcrypt",
 ]
 
 [tool.pytest.ini_options]
