@@ -1,5 +1,5 @@
 import structlog
-from cosmos import UnitOfWork
+from cosmos import UnitOfWork, event
 
 from bookt_domain.model.aggregates.tenant.tenant_email_verifier import (
     TenantEmailVerifier,
@@ -19,6 +19,7 @@ from bookt_domain.model.aggregates.user.user_registrar import (
 logger = structlog.get_logger()
 
 
+@event(event_type_name="TenantWasRegistered")
 async def create_tenant_email_verifier(
     unit_of_work: UnitOfWork,
     event: TenantWasRegistered,
@@ -29,6 +30,7 @@ async def create_tenant_email_verifier(
     await unit_of_work.repository.save(aggregate=tenant_email_verifier)
 
 
+@event(event_type_name="TenantEmailWasVerified")
 async def add_eligible_tenant_to_user_registrar(
     unit_of_work: UnitOfWork,
     event: TenantEmailWasVerified,
@@ -42,6 +44,7 @@ async def add_eligible_tenant_to_user_registrar(
     await unit_of_work.repository.save(aggregate=registrar)
 
 
+@event(event_type_name="UserWasRegistered")
 async def create_user_email_verifier(
     unit_of_work: UnitOfWork,
     event: UserWasRegistered,
@@ -52,6 +55,7 @@ async def create_user_email_verifier(
     await unit_of_work.repository.save(aggregate=user_email_verifier)
 
 
+@event(event_type_name="UserEmailWasVerified")
 async def create_user_password_manager(
     unit_of_work: UnitOfWork,
     event: UserEmailWasVerified,
@@ -60,11 +64,3 @@ async def create_user_password_manager(
     password_manager.create(user_id=event.user_id)
 
     await unit_of_work.repository.save(aggregate=password_manager)
-
-
-EVENT_HANDLERS = {
-    "TenantWasRegistered": [create_tenant_email_verifier],
-    "TenantEmailWasVerified": [add_eligible_tenant_to_user_registrar],
-    "UserEmailWasVerified": [create_user_password_manager],
-    "UserWasRegistered": [create_user_email_verifier],
-}
