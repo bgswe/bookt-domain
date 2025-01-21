@@ -71,7 +71,7 @@ class UserAuthenticator(AggregateRoot):
             event=SetUserPasswordKeyWasGenerated(
                 stream_id=self.id,
                 user_id=self.user_id,
-                key=f"{self.stream_id}.{uuid4().hex}",
+                key=f"{self.id}.{uuid4().hex}",
             )
         )
 
