@@ -2,11 +2,6 @@ from uuid import uuid4
 
 import pytest
 
-from bookt_domain.model.aggregates.user.user_password_manager import (
-    SetPasswordKeyWasInvalid,
-    UserPasswordManager,
-)
-
 
 @pytest.fixture
 def password_manager():

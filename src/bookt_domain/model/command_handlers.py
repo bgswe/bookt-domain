@@ -7,7 +7,6 @@ from bookt_domain.model.aggregates.tenant.tenant_email_verifier import (
 from bookt_domain.model.aggregates.tenant.tenant_registrar import TenantRegistrar
 from bookt_domain.model.aggregates.user.user_authenticator import UserAuthenticator
 from bookt_domain.model.aggregates.user.user_email_verifier import UserEmailVerifier
-from bookt_domain.model.aggregates.user.user_password_manager import UserPasswordManager
 from bookt_domain.model.aggregates.user.user_registrar import UserRegistrar, UserRoles
 from bookt_domain.model.commands import (
     AuthenticateUser,
@@ -108,19 +107,19 @@ async def handle_set_user_password(
     command: SetUserPassword,
 ):
     # extract stream id from set password key
-    password_manager_id = command.set_password_key.split(".")[0]
+    authenticator_id = command.set_password_key.split(".")[0]
 
-    password_manager = await unit_of_work.repository.get(
-        id=password_manager_id,
-        aggregate_root_class=UserPasswordManager,
+    authenticator: UserAuthenticator = await unit_of_work.repository.get(
+        id=authenticator_id,
+        aggregate_root_class=UserAuthenticator,
     )
 
-    password_manager.set_password(
+    authenticator.update_password(
         key=command.set_password_key,
         password=command.password,
     )
 
-    await unit_of_work.repository.save(aggregate=password_manager)
+    await unit_of_work.repository.save(aggregate=authenticator)
 
 
 @command(command_type_name="AuthenticateUser")

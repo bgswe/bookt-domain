@@ -6,11 +6,11 @@ from bookt_domain.model.aggregates.tenant.tenant_email_verifier import (
     TenantEmailWasVerified,
 )
 from bookt_domain.model.aggregates.tenant.tenant_registrar import TenantWasRegistered
+from bookt_domain.model.aggregates.user.user_authenticator import UserAuthenticator
 from bookt_domain.model.aggregates.user.user_email_verifier import (
     UserEmailVerifier,
     UserEmailWasVerified,
 )
-from bookt_domain.model.aggregates.user.user_password_manager import UserPasswordManager
 from bookt_domain.model.aggregates.user.user_registrar import (
     UserRegistrar,
     UserWasRegistered,
@@ -60,7 +60,8 @@ async def create_user_password_manager(
     unit_of_work: UnitOfWork,
     event: UserEmailWasVerified,
 ):
-    password_manager = UserPasswordManager()
-    password_manager.create(user_id=event.user_id)
+    authenticator = UserAuthenticator()
+    authenticator.create(user_id=event.user_id)
+    authenticator.generate_set_password_key()
 
-    await unit_of_work.repository.save(aggregate=password_manager)
+    await unit_of_work.repository.save(aggregate=authenticator)

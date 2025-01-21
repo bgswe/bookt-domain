@@ -2,7 +2,6 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from bookt_domain.model.aggregates.user.user_password_manager import UserPasswordManager
 from bookt_domain.model.command_handlers import handle_set_user_password
 from bookt_domain.model.commands import SetUserPassword
 
